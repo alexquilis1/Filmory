@@ -1,0 +1,100 @@
+/* Container for the watchlist */
+.watchlist-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Header styling */
+h2 {
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+
+/* Styling for the watchlist items */
+.watchlist-item {
+  display: flex;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* Left column - Poster Image */
+.item-poster {
+  width: 200px;
+  height: auto;
+  margin-right: 20px;
+  border-radius: 5px;
+  object-fit: contain;
+}
+
+/* Right column - Item Information */
+.item-info {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Title of the item */
+h3 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+/* Description details (Genres, Dates, etc.) */
+p {
+  font-size: 1em;
+  margin: 5px 0;
+}
+
+/* Highlight watched status */
+p strong {
+  color: #333;
+}
+
+/* Watch status section */
+.item-info p strong {
+  font-weight: bold;
+  color: #4CAF50; /* Color for the "watched" status */
+}
+
+/* Button styling */
+button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  margin-top: 10px;
+  margin-right: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect for buttons */
+button:hover {
+  background-color: #45a049;
+}
+
+/* Button to remove the item */
+button.remove-btn {
+  background-color: #f44336;
+}
+
+button.remove-btn:hover {
+  background-color: #e53935;
+}
+
+/* For the case when the watchlist is empty */
+ng-template p {
+  font-size: 1.2em;
+  color: #888;
+}
+
+/* Styling for the 'not logged in' message */
+.not-logged-in {
+  font-size: 1.2em;
+  color: #f44336;
+}
