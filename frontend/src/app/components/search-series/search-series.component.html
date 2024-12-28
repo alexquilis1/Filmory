@@ -17,9 +17,8 @@
         <div class="card-body">
           <h5 class="card-title">{{ tvSeries.name }}</h5>
 
-          <!-- Fallback for missing overview -->
           <p class="card-text">
-            {{ tvSeries.overview ? (tvSeries.overview | slice:0:100) : 'No overview available' }}
+            {{ tvSeries.overview ? tvSeries.overview : 'No overview available' }}
           </p>
 
           <p class="card-text">
@@ -28,12 +27,19 @@
             </small>
           </p>
 
+          <button
+            *ngIf="isLoggedIn"
+            class="btn btn-primary mt-2 add-to-watchlist-btn"
+            (click)="addToWatchlist(tvSeries)"
+          >
+            Add to Watchlist
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Pagination Controls -->
+
   <div class="d-flex justify-content-between mt-4">
     <button
       class="btn btn-primary"

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../auth.service';
-import {FormsModule} from '@angular/forms';
-import {NgIf} from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-register',
@@ -20,12 +20,37 @@ export class RegisterComponent {
   confirmPassword = '';
   error = '';
   success = '';
+  usernameError = '';
+  emailError = '';
+  passwordError = '';
+  confirmPasswordError = '';
 
   constructor(private authService: AuthService) {}
 
   onRegister(): void {
+    // Reset previous error messages
+    this.usernameError = '';
+    this.emailError = '';
+    this.passwordError = '';
+    this.confirmPasswordError = '';
+
+    if (!this.username) {
+      this.usernameError = 'Username is required.';
+    }
+
+    if (!this.isValidEmail(this.email)) {
+      this.emailError = 'Please provide a valid email.';
+    }
+
+    if (this.password.length < 6) {
+      this.passwordError = 'Password must be at least 6 characters long.';
+    }
+
     if (this.password !== this.confirmPassword) {
-      this.error = 'Passwords do not match.';
+      this.confirmPasswordError = 'Passwords do not match.';
+    }
+
+    if (this.usernameError || this.emailError || this.passwordError || this.confirmPasswordError) {
       return;
     }
 
@@ -35,9 +60,19 @@ export class RegisterComponent {
         this.success = 'Registration successful! You can now log in.';
       },
       error: (err) => {
-        this.error = err.error.message || 'An error occurred during registration. ';
+        if (err.error.message === 'Email already in use') {
+          this.emailError = 'This email is already registered.';
+        } else {
+          this.error = err.error.message || 'An error occurred during registration.';
+        }
         this.success = '';
       }
     });
+  }
+
+  // Helper function to validate email format
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zAZ0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
   }
 }

@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { NgForOf, NgIf, NgOptimizedImage, SlicePipe } from '@angular/common';
+import { NgForOf, NgIf } from '@angular/common';
+import { WatchlistService } from '../../services/watchlist/watchlist.service';
+import { AuthService } from '../../auth.service';
+import { WatchlistItemCreate } from '../../models/watchlist-item.model';
 
 @Component({
   selector: 'app-search-movie',
@@ -9,7 +12,6 @@ import { NgForOf, NgIf, NgOptimizedImage, SlicePipe } from '@angular/common';
   imports: [
     NgIf,
     NgForOf,
-    SlicePipe,
   ],
   templateUrl: './search-movie.component.html',
   styleUrls: ['./search-movie.component.css'],
@@ -20,8 +22,17 @@ export class SearchMovieComponent implements OnInit {
   currentPage: number = 1;
   resultsPerPage: number = 6;
   paginatedResults: any[] = [];
+  isLoggedIn: boolean = false;
+  email: string = '';
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) {}
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private authService: AuthService,
+    private watchlistService: WatchlistService
+  ) {
+    this.updateLoginStatus();
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -39,8 +50,8 @@ export class SearchMovieComponent implements OnInit {
     this.http.get<any>(url).subscribe({
       next: (response) => {
         this.results = response.results || [];
-        this.sortByReleaseDate(); // Sort results by release date before pagination
-        this.paginateResults(); // Paginate after sorting
+        this.sortByReleaseDate();
+        this.paginateResults();
       },
       error: (error) => {
         console.error('Error fetching movie:', error);
@@ -52,7 +63,7 @@ export class SearchMovieComponent implements OnInit {
     this.results.sort((a, b) => {
       const dateA = new Date(a.release_date);
       const dateB = new Date(b.release_date);
-      return dateB.getTime() - dateA.getTime(); // Sorting from newer to older
+      return dateB.getTime() - dateA.getTime();
     });
   }
 
@@ -74,4 +85,73 @@ export class SearchMovieComponent implements OnInit {
       this.paginateResults();
     }
   }
+
+  updateLoginStatus(): void {
+    this.isLoggedIn = this.authService.isLoggedIn();
+    if (this.isLoggedIn) {
+      this.email = localStorage.getItem('email') || '';
+      console.log('Email retrieved is this: ', this.email);
+      console.log("Checking is working!!!")
+    } else {
+      this.email = '';
+    }
+  }
+
+  addToWatchlist(movieOrShow: any): void {
+    const userId = this.authService.getUserId();
+    console.log('Retrieved userId: ', userId)
+
+    if (!userId) {
+      console.log('User is not logged in.');
+      alert('You must be logged in to add items to your watchlist.');
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      console.log('Authorization token is missing.');
+      alert('You must be logged in to add items to your watchlist.');
+      return;
+    }
+
+    const watchlistItem: WatchlistItemCreate = {
+      tmdb_id: movieOrShow.id,
+      type: 'movie',
+      user_id: userId,
+    };
+
+
+    this.watchlistService.addToWatchlist(watchlistItem, token).subscribe(
+      (newItem) => {
+        console.log('Successfully added to watchlist:', newItem);
+        alert('A new item has been added to your watchlist!');
+      },
+      (error) => {
+        console.error('Error adding to watchlist:', error);
+
+        // Manejo detallado de errores
+        if (error.status === 401) {
+          console.error('Unauthorized: Authorization token required or invalid.');
+          alert('Authorization token is missing or invalid. Please log in again.');
+        } else if (error.status === 400) {
+          console.error('Bad Request: Check the payload or request format.');
+          alert('Failed to add to watchlist due to bad request. Please verify the input.');
+        } else if (error.status === 500) {
+          // Verificar si hay información adicional en el error
+          const backendError = error?.error;
+          console.error('Internal Server Error details:', backendError);
+          if (backendError?.detail) {
+            alert(`Failed to add to watchlist: ${backendError.detail}`);
+          } else {
+            alert('Failed to add to watchlist due to an internal server error.');
+          }
+        } else {
+          console.error('Unhandled error:', error);
+          alert('An unexpected error occurred. Please try again later.');
+        }
+      }
+    );
+  }
+
 }

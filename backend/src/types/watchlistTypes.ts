@@ -5,4 +5,6 @@ export interface WatchlistItem {
     added_date: string;
     watched: boolean;
     user_id: number;
+    user_rating: number;
+    comments: string;
 }

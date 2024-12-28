@@ -10,55 +10,84 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateWatchlistController = exports.deleteWatchlistController = exports.getWatchlistController = exports.addToWatchlistController = void 0;
-require("../types/types"); // Esto carga los tipos globalmente
+require("../types/types"); // This loads the global types
 const watchlistModel_1 = require("../models/watchlistModel");
 // Controller to add elements to the Watchlist
 const addToWatchlistController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { type, tmdb_id, title } = req.body;
-    const userId = req.user.id; // Assume you have the userId from middleware
+    const { type, tmdb_id } = req.body;
+    if (!req.user || !req.user.user_id) {
+        return res.status(401).json({ message: 'User not authenticated' });
+    }
+    const userId = req.user.user_id;
     try {
-        const newItem = yield (0, watchlistModel_1.addToWatchlist)(userId, type, tmdb_id, title);
-        res.status(201).json(newItem); // Return the added item
+        const newItem = yield (0, watchlistModel_1.addToWatchlist)(userId, type, tmdb_id);
+        return res.status(201).json(newItem);
     }
     catch (error) {
-        res.status(500).json({ message: 'Error adding to watchlist', error });
+        console.error(error);
+        return res.status(500).json({ message: 'Error adding to watchlist', error });
     }
 });
 exports.addToWatchlistController = addToWatchlistController;
 // Controller to get Watchlist
 const getWatchlistController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userId = req.user.id; // Assume userId is available in req.user
+    if (!req.user || !req.user.user_id) {
+        return res.status(401).json({ message: 'User not authenticated' });
+    }
+    const userId = req.user.user_id;
     try {
         const watchlistItems = yield (0, watchlistModel_1.getWatchlist)(userId);
-        res.status(200).json(watchlistItems); // Return all watchlist items
+        return res.status(200).json(watchlistItems);
     }
     catch (error) {
-        res.status(500).json({ message: 'Error fetching watchlist items', error });
+        return res.status(500).json({ message: 'Error fetching watchlist items', error });
     }
 });
 exports.getWatchlistController = getWatchlistController;
+// Controller to delete Watchlist item
 const deleteWatchlistController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const userId = req.user.id;
+    if (!req.user || !req.user.user_id) {
+        return res.status(401).json({ message: 'User not authenticated' });
+    }
+    const userId = req.user.user_id;
     try {
         const deletedItem = yield (0, watchlistModel_1.deleteWatchlistItem)(userId, Number(id));
-        res.status(200).json(deletedItem); // Return the deleted item
+        return res.status(200).json(deletedItem);
     }
     catch (error) {
-        res.status(500).json({ message: 'Error deleting watchlist item', error });
+        return res.status(500).json({ message: 'Error deleting watchlist item', error });
     }
 });
 exports.deleteWatchlistController = deleteWatchlistController;
+// Controller to update Watchlist item status
 const updateWatchlistController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { watched } = req.body;
-    const userId = req.user.id;
+    const { watched, user_rating, comments } = req.body;
+    if (!req.user || !req.user.user_id) {
+        return res.status(401).json({ message: 'User not authenticated' });
+    }
+    const userId = req.user.user_id;
     try {
-        const updatedItem = yield (0, watchlistModel_1.updateWatchedStatus)(userId, Number(id), watched);
-        res.status(200).json(updatedItem); // Return the updated item
+        // Validate that if watched is true, user_rating and comments are required
+        if (watched) {
+            if (user_rating === undefined || user_rating === null || comments === undefined || comments === null) {
+                return res.status(400).json({
+                    message: 'user_rating and comments are required when watched is true'
+                });
+            }
+            // Validate that user_rating is within the allowed range
+            if (user_rating < 0 || user_rating > 10) {
+                return res.status(400).json({
+                    message: 'user_rating must be between 0 and 10'
+                });
+            }
+        }
+        const updatedItem = yield (0, watchlistModel_1.updateWatchedStatus)(userId, Number(id), watched, watched ? user_rating : null, watched ? comments : null);
+        return res.status(200).json(updatedItem);
     }
     catch (error) {
-        res.status(500).json({ message: 'Error updating watchlist item', error });
+        return res.status(500).json({ message: 'Error updating watchlist item', error });
     }
 });
 exports.updateWatchlistController = updateWatchlistController;

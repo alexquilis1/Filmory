@@ -1,7 +1,6 @@
 // @ts-ignore
 import { Pool } from 'pg';
 
-// Configuración de la base de datos
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
@@ -10,7 +9,6 @@ const pool = new Pool({
     port: 5432,
 });
 
-// Función para hacer consultas a la base de datos
 export const query = async (sql: string, params: any[]) => {
     try {
         const res = await pool.query(sql, params);

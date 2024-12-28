@@ -1,9 +1,7 @@
-// watchlist.service.ts
-
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { WatchlistItem, WatchlistItemCreate } from '../models/watchlist-item.model';
+import { WatchlistItem, WatchlistItemCreate } from '../../models/watchlist-item.model';
 
 @Injectable({
   providedIn: 'root'
@@ -28,8 +26,17 @@ export class WatchlistService {
     return this.http.delete<WatchlistItem>(`${this.baseUrl}/${id}/delete`, { headers });
   }
 
-  updateWatchlistStatus(id: number, watched: boolean, token: string): Observable<WatchlistItem> {
+  updateWatchlistStatus(id: number, watched: boolean, rating: number, comment: string, token: string): Observable<WatchlistItem> {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.patch<WatchlistItem>(`${this.baseUrl}/${id}/watched`, { watched }, { headers });
+    return this.http.patch<WatchlistItem>(`${this.baseUrl}/${id}/watched`,
+      {
+        watched,
+        user_rating: rating,
+        comments: comment
+      },
+      { headers }
+    );
   }
+
+
 }

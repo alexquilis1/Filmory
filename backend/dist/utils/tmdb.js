@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTVSeriesDetails = exports.searchTVSeries = exports.getMovieDetails = exports.searchMovies = void 0;
+exports.getTVSeriesDetails = exports.searchTVSeries = exports.getMovieDetails = exports.searchMovies = exports.getTrendingMoviesAndSeries = void 0;
 // src/tmdb.ts
 const axios_1 = __importDefault(require("axios"));
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -23,6 +23,22 @@ if (!apiKey) {
     console.error('Error (tmdb.ts): TMDB API Key is missing!');
     process.exit(1);
 }
+const getTrendingMoviesAndSeries = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const response = yield axios_1.default.get('https://api.themoviedb.org/3/trending/all/day', {
+            params: {
+                api_key: apiKey,
+                language: 'en-EN'
+            },
+        });
+        return response.data;
+    }
+    catch (error) {
+        console.error('Error fetching trending movies and series:', error);
+        throw new Error('Failed to fetch trending movies and series');
+    }
+});
+exports.getTrendingMoviesAndSeries = getTrendingMoviesAndSeries;
 // Function to search movies by query
 const searchMovies = (title) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -68,7 +84,6 @@ const searchTVSeries = (title) => __awaiter(void 0, void 0, void 0, function* ()
         return response.data;
     }
     catch (error) {
-        // Log more details for debugging
         console.error('Error fetching TV series data:', ((_a = error.response) === null || _a === void 0 ? void 0 : _a.data) || error.message);
         throw new Error('Failed to fetch movies');
     }

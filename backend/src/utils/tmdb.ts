@@ -17,10 +17,10 @@ export const getTrendingMoviesAndSeries = async () => {
         const response = await axios.get('https://api.themoviedb.org/3/trending/all/day', {
             params: {
                 api_key: apiKey,
-                language: 'en-EN',  // Asegúrate de que el idioma sea el correcto
+                language: 'en-EN'
             },
         });
-        return response.data; // Devolveremos el JSON con las películas y series
+        return response.data;
     } catch (error) {
         console.error('Error fetching trending movies and series:', error);
         throw new Error('Failed to fetch trending movies and series');
@@ -68,7 +68,6 @@ export const searchTVSeries = async (title: string) => {
         });
         return response.data
     } catch (error: any) {
-        // Log more details for debugging
         console.error('Error fetching TV series data:', error.response?.data || error.message);
         throw new Error('Failed to fetch movies');
     }
@@ -87,3 +86,5 @@ export const getTVSeriesDetails = async (seriesId: string) => {
         throw new Error('Error fetching TV series details');
     }
 }
+
+

@@ -1,12 +1,12 @@
 // middleware/authMiddleware.ts
 import jwt from 'jsonwebtoken';
-import path from "path";
-import dotenv from "dotenv";
+import path from 'path';
+import dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-const JWT_SECRET = process.env.JWT_SECRET;  // Store this in an environment variable, e.g., process.env.JWT_SECRET
+const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
     console.error('JWT_SECRET is not defined in the environment variables');
@@ -36,7 +36,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
     try {
         const decoded = jwt.verify(token, JWT_SECRET) as { user_id: number };
         req.user = decoded; // Attach decoded payload to req.user
-        next(); // Proceed to the next middleware/route handler
+        next();
     } catch (error) {
         console.error('JWT verification error:', error);
         if (error instanceof jwt.JsonWebTokenError) {

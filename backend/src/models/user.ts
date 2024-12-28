@@ -7,13 +7,11 @@ import path from "path";
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-const JWT_SECRET = process.env.JWT_SECRET;  // Store this in an environment variable, e.g., process.env.JWT_SECRET
-
+const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
     throw new Error('JWT_SECRET is not defined in the environment variables');
 }
 
-// Function to sign up a user
 export const signUp = async (username: string, email: string, password: string) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const sql = `
@@ -47,10 +45,10 @@ export const login = async (email: string, password: string) => {
     // @ts-ignore
     const token = jwt.sign({ user_id: user.id }, JWT_SECRET, { expiresIn: '1h' });
 
-    // Return userId, token, and email
     return {
         user_id: user.id,
         token,
-        email: user.email,  // Include the email here
+        email: user.email,
+        username: user.username,
     };
 };

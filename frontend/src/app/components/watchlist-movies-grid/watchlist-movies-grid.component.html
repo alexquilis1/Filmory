@@ -1,0 +1,12 @@
+<div class="ag-grid-container">
+  <ag-grid-angular
+    class="ag-theme-alpine"
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [modules]="modules"
+    (gridReady)="onGridReady($event)"
+    [style.height.px]="gridHeight">
+  </ag-grid-angular>
+  <button class="btn btn-primary export-btn" (click)="exportToCSV()">Export to CSV</button>
+</div>

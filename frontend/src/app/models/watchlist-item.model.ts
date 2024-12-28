@@ -9,8 +9,8 @@ export interface WatchlistItemCreate {
 export type WatchlistItem = Movie | TvShow;
 
 export interface Movie {
-  id: number; // Unique ID for the movie
-  tmdb_id: number; // TMDB ID for the movie
+  id: number;
+  tmdb_id: number;
   watched: boolean;
   added_date: string;
   title: string;
@@ -19,18 +19,21 @@ export interface Movie {
   genres: string;
   releaseDate: string;
   runtime: number;
-  type: 'movie'; // Specify that it's a movie
+  voteAverage: number;
+  type: 'movie';
+  user_rating: number | null;
+  comments: string | null;
 }
 
 export interface Season {
   seasonNumber: number;
   episodeCount: number;
-  posterUrl: string;
+  averageVote: number;
 }
 
 export interface TvShow {
-  id: number; // Unique ID for the TV show
-  tmdb_id: number; // TMDB ID for the TV show
+  id: number;
+  tmdb_id: number;
   watched: boolean;
   added_date: string;
   title: string;
@@ -43,6 +46,8 @@ export interface TvShow {
   numberOfEpisodes: number;
   voteAverage: number;
   status: string;
-  seasons: Season[]; // Array of seasons
-  type: 'tv'; // Specify that it's a TV show
+  seasons: Season[];
+  type: 'tv';
+  user_rating: number | null;
+  comments: string | null;
 }

@@ -4,12 +4,13 @@
     <div class="form-group">
       <label for="email">Email</label>
       <input
-        type="text"
+        type="email"
         id="email"
         [(ngModel)]="email"
         name="email"
         placeholder="Enter your email"
         required
+        autocomplete="email"
       />
     </div>
 
@@ -22,6 +23,7 @@
         name="password"
         placeholder="Enter your password"
         required
+        autocomplete="current-password"
       />
     </div>
 

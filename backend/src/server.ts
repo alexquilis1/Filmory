@@ -30,7 +30,7 @@ app.use('/api/watchlist', authenticate, (req: Request, res: Response) => {
     res.send('This is a protected watchlist route');
 });
 
-setupSwagger(app); // Configure Swagger UI
+setupSwagger(app);
 
 
 

@@ -4,7 +4,7 @@ export const routes: Routes = [
   {
     path: '',
     redirectTo: 'trending',
-    pathMatch: 'full' // Redirige a 'trending' por defecto
+    pathMatch: 'full'
   },
   {
     path: 'search-movie/:title',
@@ -29,6 +29,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'trending' // Ruta de fallback
+    redirectTo: 'trending'
   },
 ];

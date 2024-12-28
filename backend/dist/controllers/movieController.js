@@ -42,9 +42,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTVSeriesDetails = exports.searchTVSeries = exports.getMovieDetails = exports.searchMovie = void 0;
-require("../types/types"); // Esto carga los tipos globalmente
+exports.getTVSeriesDetails = exports.searchTVSeries = exports.getMovieDetails = exports.searchMovie = exports.getTrendingMoviesAndSeries = void 0;
+require("../types/types"); // This loads the global types
 const tmdb = __importStar(require("../utils/tmdb"));
+// Function to handle requests for trending movies and series
+const getTrendingMoviesAndSeries = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const trendingData = yield tmdb.getTrendingMoviesAndSeries();
+        // Returns the data to the client (frontend)
+        res.json(trendingData);
+    }
+    catch (error) {
+        console.error('Error fetching trending data:', error);
+        res.status(500).json({ message: 'Error fetching trending data' });
+    }
+});
+exports.getTrendingMoviesAndSeries = getTrendingMoviesAndSeries;
 // Controller for searching movies
 const searchMovie = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title } = req.params;

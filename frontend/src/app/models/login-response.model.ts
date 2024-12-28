@@ -1,7 +1,6 @@
-// models/login-response.model.ts
-
 export interface LoginResponse {
-  user_id: number;
+  userId: number;
   token: string;
-  email: string;  // Add the email field here
+  email: string;
+  username: string;
 }

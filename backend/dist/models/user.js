@@ -20,11 +20,10 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, '../.env') });
-const JWT_SECRET = process.env.JWT_SECRET; // Store this in an environment variable, e.g., process.env.JWT_SECRET
+const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
     throw new Error('JWT_SECRET is not defined in the environment variables');
 }
-// Function to sign up a user
 const signUp = (username, email, password) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
     const sql = `
@@ -52,7 +51,12 @@ const login = (email, password) => __awaiter(void 0, void 0, void 0, function* (
     }
     // Generate JWT token
     // @ts-ignore
-    const token = jsonwebtoken_1.default.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' });
-    return token; // Return the generated token
+    const token = jsonwebtoken_1.default.sign({ user_id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+    return {
+        user_id: user.id,
+        token,
+        email: user.email,
+        username: user.username,
+    };
 });
 exports.login = login;

@@ -1,57 +1,122 @@
+<div *ngIf="showRatingDialog" class="rating-dialog">
+  <div class="rating-form">
+    <h3>Rate this item</h3>
+    <label for="rating">Rating:</label>
+    <input type="number" id="rating" [(ngModel)]="rating" min="1" max="10" />
+
+    <label for="comments">Comments:</label>
+    <textarea id="comments" [(ngModel)]="comment" placeholder="Add your comments here"></textarea>
+
+    <div class="dialog-actions">
+      <button (click)="saveRating()">Save</button>
+      <button (click)="closeRatingDialog()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <div class="watchlist-container">
   <h2>Your Watchlist</h2>
 
-  <!-- Verificar si el usuario está logueado -->
   <div *ngIf="isLoggedIn; else notLoggedIn">
-    <!-- Mostrar la lista de watchlist si hay items -->
+
+    <div class="container mt-4 mb-4">
+      <app-watchlist-chart
+        [watchlist]="watchlist">
+      </app-watchlist-chart>
+    </div>
+
     <div *ngIf="watchlist.length > 0; else noItems">
       <div *ngFor="let item of watchlist" class="watchlist-item">
-        <!-- Left column: Poster Image -->
+
         <img *ngIf="item.posterPath" [src]="item.posterPath" alt="Poster" class="item-poster" />
 
-        <!-- Right column: All information (Title, Genres, Release Date, Overview, etc.) -->
         <div class="item-info">
           <h3>{{ item.title }}</h3>
-
           <p><strong>Genres:</strong> {{ item.genres }}</p>
-          <p *ngIf="item.type === 'movie'"><strong>Release Date:</strong> {{ item.releaseDate }}</p>
-          <p *ngIf="item.type === 'tv'"><strong>First Air Date:</strong> {{ item.firstAirDate }}</p>
-          <p *ngIf="item.type === 'movie'"><strong>Runtime:</strong> {{ item.runtime }} min</p>
-          <p *ngIf="item.type === 'tv'"><strong>Seasons:</strong> {{ item.numberOfSeasons }} | <strong>Episodes:</strong> {{ item.numberOfEpisodes }}</p>
-          <p *ngIf="item.type === 'tv'"><strong>Status:</strong> {{ item.status }}</p>
-          <p *ngIf="item.type === 'tv'"><strong>Average Vote:</strong> {{ item.voteAverage }}</p>
-
+          <p *ngIf="item.type === 'movie'">
+            <strong>Release Date:</strong>
+            {{ item.releaseDate ? (item.releaseDate | date: 'dd/MM/yyyy') : 'Not Available' }}
+          </p>
+          <p *ngIf="item.type === 'tv'">
+            <strong>First Air Date:</strong>
+            {{ item.firstAirDate ? (item.firstAirDate | date: 'dd/MM/yyyy') : 'Not Available' }}
+          </p>
+          <p *ngIf="item.type === 'tv'">
+            <strong>Last Air Date:</strong>
+            {{ item.lastAirDate ? (item.lastAirDate | date: 'dd/MM/yyyy') : 'Not Available' }}
+          </p>
+          <p><strong>Average Vote:</strong> {{ item.voteAverage }}</p>
+          <p *ngIf="item.type === 'tv'"><strong>Seasons:</strong> {{ item.numberOfSeasons}} <strong>| Episodes: </strong>{{ item.numberOfEpisodes}}</p>
           <p><strong>Overview:</strong> {{ item.overview }}</p>
+          <p *ngIf="item.type === 'movie'"><strong>Runtime:</strong> {{ item.runtime }} min </p>
+          <p *ngIf="item.type === 'tv'"><strong>Status:</strong> {{ item.status}}</p>
 
-          <!-- Mostrar detalles de las temporadas para las series -->
-          <div *ngIf="item.type === 'tv'">
-            <div *ngFor="let season of item.seasons">
-              <h4>Season {{ season.seasonNumber }}</h4>
-              <p><strong>Episodes:</strong> {{ season.episodeCount }}</p>
+          <div *ngIf="item.type === 'tv'" class="seasons-container">
+            <table>
+              <thead>
+              <tr>
+                <th>Season</th>
+                <th>Episodes</th>
+                <th>Average Vote</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let season of item.seasons">
+                <ng-container *ngIf="season.seasonNumber > 0">
+                  <td>{{ season.seasonNumber }}</td>
+                  <td>{{ season.episodeCount }}</td>
+                  <td>{{ season.averageVote }}</td>
+                </ng-container>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <hr class="separator" />
+
+          <div class="user-info">
+            <p><strong>Added on:</strong> {{ item.added_date | date: 'dd/MM/yyyy HH:mm' }}</p>
+            <p><strong>Watched:</strong> {{ item.watched ? 'Yes' : 'No' }}</p>
+
+            <div *ngIf="item.user_rating || item.comments" class="rating-comments-container">
+              <p *ngIf="item.user_rating" class="rating-text"><strong>Your Rating:</strong> {{ item.user_rating }}/10</p>
+              <p *ngIf="item.comments" class="comments-text"><strong>Your Comments:</strong> {{ item.comments }}</p>
             </div>
           </div>
 
-          <!-- Mostrar estado de watched -->
-          <p><strong>Watched:</strong> {{ item.watched ? 'Yes' : 'No' }}</p>
-
-          <!-- Fecha de adición -->
-          <p><strong>Added on:</strong> {{ item.added_date | date: 'yyyy-MM-dd HH:mm' }}</p>
-
-          <!-- Botones para modificar el estado de watched y eliminar el item -->
-          <button (click)="toggleWatchedStatus(item)">Toggle Watched</button>
-          <button (click)="removeFromWatchlist(item)">Remove</button>
+          <div class="actions">
+            <button class="toggle-btn" (click)="toggleWatchedStatus(item)">Toggle Watched</button>
+            <button class="remove-btn" (click)="removeFromWatchlist(item)">Remove</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Template para cuando la lista está vacía -->
+
+    <div class="container mt-5 mb-5">
+      <div class="grid-section">
+        <h3>Top Rated Movies</h3>
+        <p>Movies you've given a rating of 8 or above.</p>
+        <app-watchlist-movies-grid [rowData]="topRatedMovies"></app-watchlist-movies-grid>
+      </div>
+    </div>
+
+    <div class="container mt-5">
+      <div class="grid-section">
+        <h3>Top Rated TV Series</h3>
+        <p>TV Series you've given a rating of 8 or above.</p>
+        <app-watchlist-series-grid [rowData]="topRatedSeries"></app-watchlist-series-grid>
+      </div>
+    </div>
+
+
     <ng-template #noItems>
       <p>Your watchlist is empty.</p>
     </ng-template>
   </div>
 
-  <!-- Template para cuando el usuario no está logueado -->
   <ng-template #notLoggedIn>
     <p>You need to log in to view your watchlist.</p>
   </ng-template>
 </div>
+

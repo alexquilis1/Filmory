@@ -1,4 +1,3 @@
-/* Styling the container */
 .login-container {
   max-width: 400px;
   margin: 50px auto;
@@ -9,7 +8,6 @@
   font-family: Arial, sans-serif;
 }
 
-/* Styling the title */
 .login-container h2 {
   text-align: center;
   color: #333;
@@ -17,7 +15,6 @@
   font-size: 24px;
 }
 
-/* Styling the form */
 .login-form .form-group {
   margin-bottom: 15px;
 }
@@ -43,7 +40,6 @@
   outline: none;
 }
 
-/* Styling the button */
 .btn-login {
   width: 100%;
   padding: 12px;
@@ -61,7 +57,6 @@
   background-color: #0056b3;
 }
 
-/* Responsive design */
 @media (max-width: 600px) {
   .login-container {
     margin: 20px;
@@ -69,7 +64,6 @@
   }
 }
 
-/* Success Message */
 .success-message {
   margin-top: 10px;
   padding: 10px 15px;
@@ -83,7 +77,6 @@
   width: 100%;
 }
 
-/* Error Message */
 .error-message {
   margin-top: 10px;
   padding: 10px 15px;

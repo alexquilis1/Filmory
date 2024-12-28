@@ -1,7 +1,7 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">My Movie App</a>
+      <a class="navbar-brand" href="/">Filmory</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -19,16 +19,15 @@
             <a class="nav-link active" routerLink="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/watchlist" target="_blank">Watchlist</a>
+            <a class="nav-link" routerLink="/watchlist">Watchlist</a>
           </li>
         </ul>
-        <!-- Conditionally render buttons based on login state -->
+
         <div *ngIf="isLoggedIn; else loggedOut" class="user-info">
-          <span class="navbar-text welcome-message">Welcome, {{ email }}!</span>
+          <span class="navbar-text welcome-message">Welcome, {{ username }}!</span>
           <button class="btn btn-outline-light me-2 logout-btn" (click)="logout()">Logout</button>
         </div>
 
-        <!-- Template for when user is not logged in -->
         <ng-template #loggedOut>
           <button class="btn btn-outline-light me-2" (click)="openLogin()">Login</button>
           <button class="btn btn-light" (click)="openRegister()">Register</button>
@@ -38,7 +37,6 @@
   </nav>
 </header>
 
-<!-- Conditional rendering of Login Modal -->
 <div class="modal" *ngIf="showLogin">
   <div class="modal-content">
     <span class="close" (click)="closeModal()">&times;</span>
@@ -46,7 +44,6 @@
   </div>
 </div>
 
-<!-- Conditional rendering of Register Modal -->
 <div class="modal" *ngIf="showRegister">
   <div class="modal-content">
     <span class="close" (click)="closeModal()">&times;</span>
@@ -54,55 +51,68 @@
   </div>
 </div>
 
-<div class="container-searchbar">
-  <h1>Welcome to the Movie & TV Series Search</h1>
-  <div class="search-bar">
-    <input
-      type="text"
-      [(ngModel)]="title"
-      placeholder="Enter movie or TV series title"
-    />
-    <select [(ngModel)]="searchType">
-      <option value="movie">Movie</option>
-      <option value="tv-series">TV Series</option>
-    </select>
-    <button (click)="onSearchSubmit()">Search</button>
+<div *ngIf="router.url !== '/watchlist'">
+  <div class="container-searchbar">
+    <h1>Welcome to the Movies & TV Series Search</h1>
+    <div class="search-bar">
+      <input
+        type="text"
+        [(ngModel)]="title"
+        placeholder="Enter movie or TV series title"
+      />
+      <select [(ngModel)]="searchType">
+        <option value="movie">Movie</option>
+        <option value="tv-series">TV Series</option>
+      </select>
+      <button (click)="onSearchSubmit()">Search</button>
+    </div>
   </div>
 </div>
 
-<!-- Main Content -->
 <main class="container">
   <router-outlet></router-outlet>
-  <h1>Trending Movies & TV Series</h1>
-  <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-    <div *ngFor="let movie of (trendingMovies$ | async)?.results" class="col">
-      <div class="card">
-        <img
-          *ngIf="movie.poster_path"
-          [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path"
-          class="card-img-top"
-          alt="{{ movie.title || movie.name }} Poster"
-        />
-        <div class="card-body">
-          <h5 class="card-title">{{ movie.title || movie.name }}</h5>
-          <p class="card-text">{{ movie.overview | slice: 0:120 }}...</p>
-          <p class="media-type">
-            {{ movie.media_type === 'movie' ? 'Movie' : 'TV Show' }}
-          </p>
-          <button
-            *ngIf="isLoggedIn"
-            class="btn btn-primary mt-2"
-            (click)="addToWatchlist(movie)"
-          >
-            Add to Watchlist
-          </button>
+  <div *ngIf="router.url !== '/watchlist'" class="container-trending">
+    <h1>Trending Movies & TV Series</h1>
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+      <div *ngFor="let movie of (trendingMovies$ | async)?.results" class="col">
+        <div class="card">
+          <img
+            *ngIf="movie.poster_path"
+            [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path"
+            class="card-img-top"
+            alt="{{ movie.title || movie.name }} Poster"
+          />
+          <div class="card-body">
+            <h5 class="card-title">{{ movie.title || movie.name }}</h5>
+            <p class="card-text">{{ movie.overview }}</p>
+            <p class="media-type">
+              {{ movie.media_type === 'movie' ? 'Movie' : 'TV Series' }}
+            </p>
+
+            <p *ngIf="movie.media_type === 'movie'">
+              Release Date:
+              {{ movie.release_date ? (movie.release_date | date:'dd/MM/yyyy') : 'Not available' }}
+            </p>
+            <p *ngIf="movie.media_type === 'tv'">
+              First Aired Date:
+              {{ movie.first_air_date ? (movie.first_air_date | date:'dd/MM/yyyy') : 'Not available' }}
+            </p>
+
+            <button
+              *ngIf="isLoggedIn"
+              class="btn btn-primary mt-2 add-to-watchlist-btn"
+              (click)="addToWatchlist(movie)"
+            >
+              Add to Watchlist
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </main>
 
-<!-- Footer -->
+
 <footer class="footer">
   <div class="container">
     <p>

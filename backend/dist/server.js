@@ -30,7 +30,7 @@ app.use('/api', movieRoutes_1.default);
 app.use('/api/watchlist', authMiddleware_1.authenticate, (req, res) => {
     res.send('This is a protected watchlist route');
 });
-(0, swagger_1.setupSwagger)(app); // Configure Swagger UI
+(0, swagger_1.setupSwagger)(app);
 // Export the app and start function
 const startServer = () => {
     app.listen(port, () => {

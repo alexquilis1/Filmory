@@ -10,15 +10,24 @@ const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Movie Watchlist API',
+            title: 'Filmory',
             version: '1.0.0',
-            description: 'API for managing movies and TV shows watchlists',
+            description: 'API for managing watchlists of movies and TV series.',
         },
         servers: [
             {
                 url: 'http://localhost:3000/api',
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT', // Formato del token
+                },
+            },
+        },
     },
     apis: ['./src/routes/*.ts'], // Rutas donde añades las anotaciones Swagger
 };
