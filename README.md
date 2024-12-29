@@ -102,6 +102,13 @@ npm install
 #### Database Setup
 1. Create a PostgreSQL database named `movie_series_watchlist`.
 2. Run the `create_tables.sql` script to set up the necessary database schema.
+3. Ensure your PostgreSQL instance is configured with the following default settings:
+   - User: postgres
+   - Password: root (update if necessary)
+   - Host: localhost
+   - Port: 5432 (default PostgreSQL port)
+  
+**Note: If your PostgreSQL setup uses a different user, password, host, or port, make sure to update these details in the backend configuration file before running the project.**
 
 #### Run the Application
 - Backend:
